@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+
+
+
+	<!-- beans -->
+	<!-- 引入配置文件 -->
+	<bean id="happProperties" class="com.happ.webcore.base.conf.HAPPConfig">
+		<property name="locations">
+			<list>
+				<!-- mybatis配置文件 -->
+				<value>classpath:db/mybatis/mybatis.properties</value>
+				<!-- app配置文件 -->
+				<value>classpath:happ.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="jackjsonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+		<!-- 为null字段时不显示 -->
+		<property name="serializationInclusion">
+			<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+		</property>
+	</bean>
+
+	<!-- org.springframework.http.converter.json.MappingJackson2HttpMessageConverter -->
+
+	<bean id="jackjsonConverterCbor"
+		class="org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter"></bean>
+
+	<bean id="jackjsonConverterProtobuf"
+		class="org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter"></bean>
+
+	<bean id="jackjsonConverterSmile"
+		class="org.springframework.http.converter.smile.MappingJackson2SmileHttpMessageConverter"></bean>
+
+	<bean id="jackjsonConverterXML"
+		class="org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter"></bean>
+
+	<bean id="jackjsonConverterJSON"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
+		p:objectMapper-ref="jackjsonObjectMapper"></bean>
+
+
+	<bean id="redis" class="com.happ.webcore.db.redis.HRedis"></bean>
+
+
+
+	<!-- 协商多种视图解析器 -->
+
+
+	<!-- beans end -->
+
+
+
+
+	<!-- context -->
+	<context:component-scan base-package="com.happ">
+		<context:include-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+
+	<!-- context end -->
+
+	<!-- MVC -->
+	<mvc:annotation-driven>
+
+		<!-- json配置 -->
+		<mvc:message-converters>
+			<ref bean="jackjsonConverterJSON" />
+			<ref bean="jackjsonConverterXML" />
+			<ref bean="jackjsonConverterCbor" />
+			<ref bean="jackjsonConverterProtobuf" />
+			<ref bean="jackjsonConverterSmile" />
+
+
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<mvc:default-servlet-handler />
+
+	<!-- MVC end -->
+
+
+
+
+
+	<!-- aop -->
+
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<!-- aop end -->
+
+	<!-- import spring files -->
+	<import resource="classpath:db/mybatis/happMybatis.xml" />
+
+
+
+</beans>

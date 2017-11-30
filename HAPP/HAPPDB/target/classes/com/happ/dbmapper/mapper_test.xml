@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="test">
+	<cache-ref namespace="dbcache" />
+
+
+
+
+	<insert id="insertMenu" parameterType="map" keyProperty="uuid" useGeneratedKeys="true" >
+		insert into TLDY_MENU
+		<foreach collection="_parameter" index="key"  item="value" open="(" close=")"
+			separator=",">
+			${key}
+		</foreach>
+		values
+		<foreach collection="_parameter" index="key"  item="value" open="(" close=")"
+			separator=",">
+			#{_parameter[${key}]}
+		</foreach>
+	</insert>
+	
+	<update id="updateMenu" parameterType="map">
+		update TLDY_MENU
+		<foreach collection="_parameter" index="key"  item="value" open="set " close=""
+			separator=",">
+			<if test="!key.startsWith('_where_')">
+			${key} = #{_parameter[${key}]}
+			</if>
+			
+		</foreach>
+		<foreach collection="_parameter" index="key"  item="value" open="where " close=""
+			separator="and">
+			<if test="key.startsWith('_where_')">
+				${key.substring(7)} = #{_parameter[${key}]}
+			</if>
+			
+		</foreach>
+	</update>
+	
+	<delete id="deleteMenu" parameterType="map">
+	delete TLDY_MENU
+	<foreach collection="_parameter" index="key"  item="value" open="where" close=""
+			separator=" and ">
+			${key} = #{_parameter[${key}]}
+		</foreach>
+	</delete>
+
+	<!-- 查询 menus -->
+	<select id="queryMenus" resultType="map" useCache="true">
+		select
+		t.uuid,
+		t.parentId,
+		t.name_zh,
+		t.name_tw,
+		t.name_en,
+		t.description_zh,
+		t.description_tw,
+		t.description_en,
+		t.icon,
+		t.url,
+		date_format(t.createtime,'%Y%m%d%H%i%s') as createtime,
+		date_format(t.updatetime,'%Y%m%d%H%i%s') as updatetime,
+		t.addtion0,
+		t.addtion1,
+		t.addtion2
+		from
+		TLDY_MENU t
+		<where>
+			t.enable=1
+			<if test="uuid != null">
+				AND t.uuid=#{uuid}
+			</if>
+			<if test="parentId != null">
+				AND t.parentId=#{parentId}
+			</if>
+			<if test="name_zh != null">
+				AND t.name_zh like #{name_zh}
+			</if>
+			<if test="name_tw != null">
+				AND t.name_tw like #{name_tw}
+			</if>
+			<if test="name_en != null">
+				AND t.name_en like #{name_en}
+			</if>
+			<if test="description_zh != null">
+				AND t.description_zh like #{description_zh}
+			</if>
+			<if test="description_tw != null">
+				AND t.description_tw like #{description_tw}
+			</if>
+			<if test="description_en != null">
+				AND t.description_en like #{description_en}
+			</if>
+			<if test="icon != null">
+				AND t.icon like #{icon}
+			</if>
+			<if test="startTime != null">
+				AND date_format(t.createtime,'%Y%m%d%H%i%s') &gt;=
+				#{startTime}
+			</if>
+			<if test="endTime != null">
+				AND date_format(t.createtime,'%Y%m%d%H%i%s') &lt;=
+				#{endTime}
+			</if>
+		</where>
+		ORDER BY t.createTime DESC
+	</select>
+</mapper>
