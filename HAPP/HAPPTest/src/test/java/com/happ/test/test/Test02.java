@@ -75,7 +75,7 @@ public class Test02 {
 //		o.put("showFlag", "Y");
 //		o.put("fromUser", "11");
 //		o.put("toUser", "80252517");
-//		o.put("pkgName", "com.ccb.ecpmobile.ecp");
+//		o.put("pkgName", "com.xx.xx.xx");
 //		
 //		System.out.println(o.toString());
 	}
