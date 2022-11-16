@@ -32,7 +32,7 @@
 		<!-- 5.0.1.RELEASE 4.3.10.RELEASE -->
 		<v.spring>5.0.1.RELEASE</v.spring>
 		<v.spring_batch>3.0.8.RELEASE</v.spring_batch>
-		<v.jackson>2.9.2</v.jackson>
+		<v.jackson>2.12.7.1</v.jackson>
 	</properties>
 
 
